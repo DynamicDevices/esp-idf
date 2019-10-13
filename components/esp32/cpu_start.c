@@ -153,11 +153,6 @@ void IRAM_ATTR call_start_cpu0()
     //Clear BSS. Please do not attempt to do any complex stuff (like early logging) before this.
     memset(&_bss_start, 0, (&_bss_end - &_bss_start) * sizeof(_bss_start));
 
-    /* Unless waking from deep sleep (implying RTC memory is intact), clear RTC bss */
-    if (rst_reas[0] != DEEPSLEEP_RESET) {
-        memset(&_rtc_bss_start, 0, (&_rtc_bss_end - &_rtc_bss_start) * sizeof(_rtc_bss_start));
-    }
-
 #if CONFIG_SPIRAM_BOOT_INIT
     esp_spiram_init_cache();
     if (esp_spiram_init() != ESP_OK) {
