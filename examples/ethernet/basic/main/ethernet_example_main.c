@@ -269,6 +269,16 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_event_handler_register(ETH_EVENT, ESP_EVENT_ANY_ID, &eth_event_handler, NULL));
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_ETH_GOT_IP, &got_ip_event_handler, NULL));
 
+    // Stop DHCP
+    ESP_ERROR_CHECK(esp_netif_dhcpc_stop(eth_netif_spi[0]));
+
+    // Set static IP address
+    esp_netif_ip_info_t ip_info;
+    esp_netif_str_to_ip4("192.168.0.123", &ip_info.ip);
+    esp_netif_str_to_ip4("255.255.255.0", &ip_info.netmask);
+    esp_netif_str_to_ip4("192.168.0.1", &ip_info.gw);
+    ESP_ERROR_CHECK(esp_netif_set_ip_info(eth_netif_spi[0], &ip_info));
+
     /* start Ethernet driver state machine */
 #if CONFIG_EXAMPLE_USE_INTERNAL_ETHERNET
     ESP_ERROR_CHECK(esp_eth_start(eth_handle));
